@@ -35,13 +35,13 @@ string LinuxParser::OperatingSystem() {
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
-  string os, kernel;
+  string os, version, kernel;
   string line;
   std::ifstream stream(kProcDirectory + kVersionFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> os >> kernel;
+    linestream >> os >> version >> kernel;
   }
   return kernel;
 }
@@ -67,7 +67,36 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+float LinuxParser::MemoryUtilization() { 
+  // simple memory used calculation 
+  // mem used % = total mem - mem free 
+  string line;
+  string key;
+  string value;
+  string ksize;
+  int memtotal = 0.0; 
+  int memfree = 0.0;
+  float memused = 0.0;
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::replace(line.begin(), line.end(), '\t', ' ');
+      std::replace(line.begin(), line.end(), ':', ' ');
+      std::istringstream linestream(line);
+      while (linestream >> key >> value >> ksize) {
+        if (key == "MemTotal") {
+          memtotal = std::stoi(value);
+        } else if (key == "MemFree") {
+          memfree = std::stoi(value); 
+        };
+      };
+    };
+  };
+  if (memtotal != 0.0) {
+    memused = (memtotal - memfree) /  memtotal; 
+  }
+  return memused; 
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
