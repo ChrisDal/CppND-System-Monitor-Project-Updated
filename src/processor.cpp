@@ -4,6 +4,21 @@
 #include "processor.h"
 #include "linux_parser.h"
 
+// Processor Constructor
+Processor::Processor() {
+  // Define the times 
+  std::vector<std::string> cpuse = LinuxParser::CpuUtilization(); 
+  // Value at instant T since the launch 
+  IdleTime(cpuse); 
+  RunningTime(cpuse); 
+  SetTotalTime(); 
+  // new reference for delta cpu usage 
+  d_idle_time_ = idle_time_; 
+  d_running_time_ = running_time_;
+  d_total_time_ = total_time_;
+  // init time 
+  init_time = true; 
+}
 
 // Return the aggregate CPU utilization
 float Processor::Utilization() { 
@@ -16,12 +31,26 @@ float Processor::Utilization() {
   return cpu_used; 
 }
 
+// Return the CPU utilization since monitor launch
+float Processor::Instant_Utilization() { 
+  std::vector<std::string> cpuse = LinuxParser::CpuUtilization();
+  IdleTime(cpuse); 
+  RunningTime(cpuse); 
+  SetTotalTime();  
+  // Define "instant cpu" usage after initialization
+  if (init_time) {
+    // At init time take the cpu classic usage 
+    init_time = false; 
+    return Processor::Utilization(); 
+  } 
+  return (RunningTime() - d_running_time_) / float(TotalTime() - d_total_time_);
+}
+
 
 // Private member handling 
 void Processor::IdleTime(std::vector<std::string> cpuse)  {
    // idle + iowait 
   idle_time_ = std::stoull(cpuse[3]) + std::stoull(cpuse[4]);
-  
 }
 
 void Processor::RunningTime(std::vector<std::string> cpuse)  {
