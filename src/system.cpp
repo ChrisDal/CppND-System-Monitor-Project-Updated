@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "process.h"
 #include "processor.h"
@@ -24,7 +25,12 @@ System::System() {
 Processor& System::Cpu() { return cpu_; }
 
 // TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() { return processes_; }
+vector<Process>& System::Processes() { 
+  vector<int> linux_pids = LinuxParser::Pids();
+  for (const auto& p : linux_pids) 
+    processes_.push_back(Process(p));
+  return processes_; 
+}
 
 // Return the system's kernel identifier (string)
 std::string System::Kernel() const {
