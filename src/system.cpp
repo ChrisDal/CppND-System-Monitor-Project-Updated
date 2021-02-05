@@ -35,7 +35,7 @@ void System::SetKernel() {
   kernel_ = LinuxParser::Kernel(); 
 }
 
-// TODO: Return the system's memory utilization
+// Return the system's memory utilization
 float System::MemoryUtilization() { 
   return LinuxParser::MemoryUtilization();
 }

@@ -33,7 +33,7 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
-// DONE: An example of how to read data from the filesystem
+// An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
   string os, version, kernel;
   string line;
@@ -127,8 +127,31 @@ long LinuxParser::ActiveJiffies() { return 0; }
 // TODO: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0; }
 
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+// Read and return CPU utilization
+vector<string> LinuxParser::CpuUtilization() { 
+  // get cpu used 
+  string line;
+  // first word 
+  string word; 
+  // processes executing 
+  string user, nice, systm; 
+  // "idle"
+  string idle, iowait, steal;
+  // servicing : interuption and soft interuption 
+  string irq, softirq; 
+  // running 
+  string guest, guest_nice;
+  // res
+  vector<string> cpuse; 
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> word >> user >> nice >> systm >> idle >> iowait >> irq >> softirq >> steal >> guest >> guest_nice;
+    cpuse = {user, nice, systm, idle, iowait, irq, softirq, steal, guest, guest_nice};
+    return cpuse; 
+  }
+}
 
 // Read and return the total number of processes
 int LinuxParser::TotalProcesses() { 
