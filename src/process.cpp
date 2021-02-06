@@ -31,13 +31,11 @@ float Process::CpuUtilization() {
   string info;
   // processes executing 
   vector<string> ptimers; 
-  // all timers
-  unsigned long int utime, stime, cutime, cstime;
-  unsigned long int starttime; 
   // CONST : hertz  
   unsigned long int nb_ticksec = sysconf(_SC_CLK_TCK);
   // res 
   unsigned long int total_time = 0;
+  unsigned long int seconds = 0;
   // calculation
   std::ifstream stream(LinuxParser::kProcDirectory + to_string(Pid()) + LinuxParser::kStatFilename);
   if (stream.is_open()) {
@@ -45,12 +43,13 @@ float Process::CpuUtilization() {
       ptimers.push_back(info); 
     }
   }
-  
   total_time = std::stoul(ptimers[13]) + std::stoul(ptimers[14]) + std::stoul(ptimers[15]) + std::stoul(ptimers[16]); 
-  return 0.17; 
+  seconds  = LinuxParser::UpTime() - ( std::stoul(ptimers[21]) / float(nb_ticksec));
+  
+  return (total_time / float(nb_ticksec)) / float(seconds) ; 
 }
 
-// TODO: Return the command that generated this process
+// Return the command that generated this process
 string Process::Command() const { 
   return cmd_; 
 }
@@ -59,7 +58,7 @@ void Process::SetCommand(){
   cmd_ = LinuxParser::Command(Pid());
 }
 
-// TODO: Return this process's memory utilization
+// Return this process's memory utilization
 string Process::Ram() { 
   long int vram; 
   short unsigned int counter = 0;
@@ -96,7 +95,7 @@ void Process::SetUser() {
 // Return the age of this process (in seconds)
 long int Process::UpTime() { 
   // Uptime is the time in second where process was born 
-  return int(LinuxParser::UpTime(Pid()));
+  return LinuxParser::UpTime(Pid());
 }
 
 // TODO: Overload the "less than" comparison operator for Process objects

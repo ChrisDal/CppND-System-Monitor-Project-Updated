@@ -110,8 +110,8 @@ long LinuxParser::UpTime() {
     std::istringstream linestream(line);
     linestream >> ktime >> kidle;
     timespent = std::stol(ktime);
-    return timespent; 
   }
+  return timespent; 
 }
 
 // TODO: Read and return the number of jiffies for the system
@@ -148,9 +148,11 @@ vector<string> LinuxParser::CpuUtilization() {
     std::getline(stream, line);
     std::istringstream linestream(line);
     linestream >> word >> user >> nice >> systm >> idle >> iowait >> irq >> softirq >> steal >> guest >> guest_nice;
-    cpuse = {user, nice, systm, idle, iowait, irq, softirq, steal, guest, guest_nice};
-    return cpuse; 
+    if (word == "cpu") {
+      cpuse = {user, nice, systm, idle, iowait, irq, softirq, steal, guest, guest_nice};
+    }
   }
+  return cpuse; 
 }
 
 // Read and return the total number of processes
@@ -167,11 +169,12 @@ int LinuxParser::TotalProcesses() {
       while (linestream >> key >> value) {
         if (key == "processes") {
           nbpro = stoi(value);
-          return nbpro; 
+          
         }
       }
     }
   }
+  return nbpro; 
 }
 
 // Read and return the number of running processes
@@ -188,11 +191,12 @@ int LinuxParser::RunningProcesses() {
       while (linestream >> key >> value) {
         if (key == "proc_running") {
           nbpro_run = stoi(value);
-          return nbpro_run; 
+          
         }
       }
     }
   }
+  return nbpro_run; 
 }
 
 // Read and return the command associated with a process
@@ -295,6 +299,6 @@ long LinuxParser::UpTime(int pid) {
       sline.push_back(line); 
     }
   } 
-  uptime = std::stol(sline[21]); 
+  uptime = std::stol(sline[20]); 
   return uptime / float(sysconf(_SC_CLK_TCK)) ; 
 }
