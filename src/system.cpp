@@ -21,14 +21,15 @@ System::System() {
   SetOps();
 }
 
-// TODO: Return the system's CPU
+// Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
-// TODO: Return a container composed of the system's processes
+// Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
   vector<int> linux_pids = LinuxParser::Pids();
   for (const auto& p : linux_pids) 
     processes_.push_back(Process(p));
+  std::sort(processes_.begin(), processes_.end());  
   return processes_; 
 }
 
