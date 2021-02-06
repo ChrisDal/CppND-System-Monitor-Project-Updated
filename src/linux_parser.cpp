@@ -114,6 +114,7 @@ long LinuxParser::UpTime() {
   return timespent; 
 }
 
+/*
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
 
@@ -126,6 +127,7 @@ long LinuxParser::ActiveJiffies() { return 0; }
 
 // TODO: Read and return the number of idle jiffies for the system
 long LinuxParser::IdleJiffies() { return 0; }
+*/ 
 
 // Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { 

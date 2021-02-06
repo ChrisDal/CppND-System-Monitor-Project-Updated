@@ -14,16 +14,17 @@ class Process {
   void SetUser(); 
   std::string Command() const;                   
   void SetCommand();
-  float CpuUtilization();                  // TODO: See src/process.cpp
-  std::string Ram();                       // TODO: See src/process.cpp
-  long int UpTime();                       // TODO: See src/process.cpp
-  bool operator<(Process const& a) const;  // TODO: See src/process.cpp
+  float CpuUtilization();                  
+  std::string Ram();                       
+  long int UpTime();                       
+  bool operator<(Process const& a) const;  
 
   // Declare any necessary private members
  private:
   std::string user_ = ""; 
   std::string cmd_ = ""; 
   int pid_; 
+  float cpusage_ = 0.0; 
 };
 
 #endif

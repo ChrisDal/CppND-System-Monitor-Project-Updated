@@ -36,6 +36,7 @@ float Process::CpuUtilization() {
   // res 
   unsigned long int total_time = 0;
   unsigned long int seconds = 0;
+  float cpusage = 0.0; 
   // calculation
   std::ifstream stream(LinuxParser::kProcDirectory + to_string(Pid()) + LinuxParser::kStatFilename);
   if (stream.is_open()) {
@@ -45,8 +46,9 @@ float Process::CpuUtilization() {
   }
   total_time = std::stoul(ptimers[13]) + std::stoul(ptimers[14]) + std::stoul(ptimers[15]) + std::stoul(ptimers[16]); 
   seconds  = LinuxParser::UpTime() - ( std::stoul(ptimers[21]) / float(nb_ticksec));
-  
-  return (total_time / float(nb_ticksec)) / float(seconds) ; 
+  cpusage  =  (total_time / float(nb_ticksec)) / float(seconds); 
+  cpusage_ = cpusage; 
+  return cpusage ; 
 }
 
 // Return the command that generated this process
@@ -98,6 +100,7 @@ long int Process::UpTime() {
   return LinuxParser::UpTime(Pid());
 }
 
-// TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
-bool Process::operator<(Process const& a[[maybe_unused]]) const { return true; }
+// Overload the "less than" comparison operator for Process objects
+bool Process::operator<(Process const& a) const { 
+  return ( cpusage_ < a.cpusage_) ? true : false; 
+  }
