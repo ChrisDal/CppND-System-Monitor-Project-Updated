@@ -17,7 +17,7 @@ Process::Process(int pid) {
   pid_ = pid;
   SetCommand(); 
   SetUser();
-  cpusage_ = 0.0;
+  cpusage_ = Process::CpuUtilization();
 };
 
 
@@ -102,5 +102,6 @@ long int Process::UpTime() {
 
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator<(Process const& a) const { 
+  // sort by cpu usage 
   return ( cpusage_ > a.cpusage_) ; 
 }

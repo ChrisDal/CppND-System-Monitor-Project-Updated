@@ -27,8 +27,11 @@ Processor& System::Cpu() { return cpu_; }
 // Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
   vector<int> linux_pids = LinuxParser::Pids();
+  // empty processes 
+  processes_ = {};
   for (const auto& p : linux_pids) 
-    processes_.push_back(Process(p));
+    processes_.emplace_back(Process(p));
+  // sort by cpu usage : max to min 
   std::sort(processes_.begin(), processes_.end());  
   return processes_; 
 }

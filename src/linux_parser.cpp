@@ -115,6 +115,7 @@ long LinuxParser::UpTime() {
 }
 
 /*
+A one access to file approach is prefered , all is done directly in functions
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
 
@@ -185,7 +186,7 @@ int LinuxParser::RunningProcesses() {
   string line;
   string key;
   string value;
-  int nbpro_run = 0.0; 
+  int nbpro_run = 0; 
   std::ifstream filestream(kProcDirectory + kStatFilename);
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
@@ -302,6 +303,6 @@ long LinuxParser::UpTime(int pid) {
       sline.push_back(line); 
     }
   } 
-  uptime = std::stol(sline[20]); 
+  uptime = std::stol(sline[21]); 
   return uptime / float(sysconf(_SC_CLK_TCK)) ; 
 }
