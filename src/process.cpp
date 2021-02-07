@@ -64,16 +64,15 @@ void Process::SetCommand(){
 string Process::Ram() { 
   long int vram; 
   short unsigned int counter = 0;
-  short unsigned int precision = 2; 
+  short unsigned int precision = 0; 
   bool floating_part = false; 
   std::ostringstream s_vram; 
   vram = std::stol(LinuxParser::Ram(Pid()));
   for (char const& c : to_string(vram / float(1000))) {
-    s_vram << c; 
-    // handling floating part to a fixed limit 
     if ( c == '.') {
       floating_part = true; 
     }
+    // handling floating part to a fixed limit 
     if (floating_part) {
       if (counter < precision){
         counter += 1; 
@@ -81,6 +80,7 @@ string Process::Ram() {
         break;
       }
     }
+    s_vram << c; 
   }          
   return s_vram.str();
 }
