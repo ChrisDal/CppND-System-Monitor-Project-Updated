@@ -210,6 +210,7 @@ string LinuxParser::Command(int pid) {
   if (stream.is_open()) {
     // handling NULL TERM character
     while (std::getline(stream, line, '\0')){
+      std::replace(line.begin(), line.end(), '\n', ' ');
       cmd += line;
       cmd += " ";
     }

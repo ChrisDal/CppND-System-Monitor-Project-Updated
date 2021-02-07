@@ -47,7 +47,7 @@ float System::MemoryUtilization() {
   return LinuxParser::MemoryUtilization();
 }
 
-// TODO: Return the operating system name
+// Return the operating system name
 std::string System::OperatingSystem() const { 
   return ops_; 
 }
