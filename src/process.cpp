@@ -102,6 +102,7 @@ long int Process::UpTime() {
 
 // Overload the "less than" comparison operator for Process objects
 bool Process::operator<(Process const& a) const { 
-  // sort by cpu usage 
+  // sort by cpu usage => greater than 
   return ( cpusage_ > a.cpusage_) ; 
 }
+

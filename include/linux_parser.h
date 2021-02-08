@@ -17,6 +17,16 @@ const std::string kMeminfoFilename{"/meminfo"};
 const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
+  
+// Keywords to find in files, find strings 
+const std::string sProcesses("processes");
+const std::string sRunningProcesses("procs_running");
+const std::string sMemTotalString("MemTotal");
+const std::string sMemFreeString("MemFree");
+const std::string sCpu("cpu");
+const std::string sUID("Uid");
+const std::string sProcMem("VmSize");
+
 
 // System
 float MemoryUtilization();
@@ -41,10 +51,13 @@ enum CPUStates {
   kGuestNice_
 };
 std::vector<std::string> CpuUtilization();
+  
+/* A one access to the file implementation is prefered
 long Jiffies();
 long ActiveJiffies();
 long ActiveJiffies(int pid);
 long IdleJiffies();
+*/
 
 // Processes
 std::string Command(int pid);
