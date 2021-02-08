@@ -43,6 +43,7 @@ string LinuxParser::Kernel() {
     std::istringstream linestream(line);
     linestream >> os >> version >> kernel;
   }
+  stream.close();
   return kernel;
 }
 
@@ -83,13 +84,14 @@ float LinuxParser::MemoryUtilization() {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value >> ksize) {
-        if (key == "MemTotal") {
+        if (key == sMemTotalString) {
           memtotal = stof(value);
-        } else if (key == "MemFree") {
+        } else if (key == sMemFreeString) {
           memfree = stof(value); 
         };
       };
     };
+    filestream.close(); 
   };
   if (memtotal != 0.0) {
     memused = (memtotal - memfree) /  memtotal; 
@@ -101,16 +103,17 @@ float LinuxParser::MemoryUtilization() {
 long LinuxParser::UpTime() { 
   // get time running  
   string line;
-  string ktime;
-  string kidle;
+  string kTime;
+  string kIdle;
   long timespent = 0; 
   std::ifstream stream(kProcDirectory + kUptimeFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> ktime >> kidle;
-    timespent = std::stol(ktime);
+    linestream >> kTime >> kIdle;
+    timespent = std::stol(kTime);
   }
+  stream.close();
   return timespent; 
 }
 
@@ -137,13 +140,19 @@ vector<string> LinuxParser::CpuUtilization() {
   // first word 
   string word; 
   // processes executing 
-  string user, nice, systm; 
+  string user;
+  string nice;
+  string systm; 
   // "idle"
-  string idle, iowait, steal;
+  string idle;
+  string iowait; 
+  string steal;
   // servicing : interuption and soft interuption 
-  string irq, softirq; 
+  string irq;
+  string softirq; 
   // running 
-  string guest, guest_nice;
+  string guest;
+  string guest_nice;
   // res
   vector<string> cpuse; 
   std::ifstream stream(kProcDirectory + kStatFilename);
@@ -151,10 +160,14 @@ vector<string> LinuxParser::CpuUtilization() {
     std::getline(stream, line);
     std::istringstream linestream(line);
     linestream >> word >> user >> nice >> systm >> idle >> iowait >> irq >> softirq >> steal >> guest >> guest_nice;
-    if (word == "cpu") {
-      cpuse = {user, nice, systm, idle, iowait, irq, softirq, steal, guest, guest_nice};
+    if (word == sCpu) {
+      cpuse = {user, nice, systm, idle, 
+               iowait, irq, softirq, 
+               steal, guest, guest_nice};
+      stream.close();
     }
   }
+  
   return cpuse; 
 }
 
@@ -164,19 +177,22 @@ int LinuxParser::TotalProcesses() {
   string line;
   string key;
   string value;
-  int nbpro = 0.0; 
+  int nbpro = 0; 
   std::ifstream filestream(kProcDirectory + kStatFilename);
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "processes") {
+        if (key == sProcesses) {
           nbpro = stoi(value);
-          
+          filestream.close();
+          break; 
         }
       }
     }
+    filestream.close(); 
   }
+  
   return nbpro; 
 }
 
@@ -192,13 +208,15 @@ int LinuxParser::RunningProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "proc_running") {
+        if (key == sRunningProcesses) {
           nbpro_run = stoi(value);
-          
+          break;
         }
       }
     }
+    filestream.close();
   }
+  
   return nbpro_run; 
 }
 
@@ -216,6 +234,7 @@ string LinuxParser::Command(int pid) {
       cmd += " ";
     }
   }
+  stream.close(); 
   // remove last space 
   return cmd.substr(0, cmd.size()-1);
 }
@@ -235,12 +254,14 @@ string LinuxParser::Ram(int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value >> other) {
-        // post-review : Vmdata = part of physical ram
-        if (key == "VmData") {
+        if (key == sProcMem) {
           vram = value;
+          filestream.close();
+          break; 
         }
       }
     }
+    filestream.close();
   }
   return vram; 
 }
@@ -258,11 +279,13 @@ string LinuxParser::Uid(int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value >> other) {
-        if (key == "Uid") {
+        if (key == sUID) {
           uid = value;
+          break;
         }
       }
     }
+    filestream.close();
   }
   return uid; 
 }
@@ -286,9 +309,11 @@ string LinuxParser::User(int pid) {
       while (linestream >> key >> value >> other >> matching_uid >> other_too ) {
         if (uid == matching_uid) {
           user = key;
+          break;
         }
       }
     }
+    filestream.close();
   }
   return user; 
 }
@@ -303,6 +328,7 @@ long LinuxParser::UpTime(int pid) {
     while (std::getline(stream, line, ' ')){
       sline.push_back(line); 
     }
+    stream.close(); 
   } 
   uptime = std::stol(sline[21]); 
   return LinuxParser::UpTime() - (uptime / float(sysconf(_SC_CLK_TCK))) ; 
