@@ -19,9 +19,9 @@ This project uses [Make](https://www.gnu.org/software/make/). The Makefile has f
 
 ## Instructions
 
-1. Clone the completed project repository: `git clone https://github.com/ChrisDal/CppND-System-Monitor-Project-Updated.git`
+1. Install [ncurses library](https://www.gnu.org/software/ncurses/) 
 
-2. Install [ncurses library](https://www.gnu.org/software/ncurses/) 
+2. Clone the completed project repository: `git clone https://github.com/ChrisDal/CppND-System-Monitor-Project-Updated.git`
 
 3. Build the project: `make build`
 
