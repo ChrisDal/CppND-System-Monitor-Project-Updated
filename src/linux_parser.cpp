@@ -235,7 +235,8 @@ string LinuxParser::Ram(int pid) {
       std::replace(line.begin(), line.end(), ':', ' ');
       std::istringstream linestream(line);
       while (linestream >> key >> value >> other) {
-        if (key == "VmSize") {
+        // post-review : Vmdata = part of physical ram
+        if (key == "VmData") {
           vram = value;
         }
       }
